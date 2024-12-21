@@ -9,7 +9,6 @@ check_ansible_installed() {
         install_ansible
     fi
 }
-
 # Function to install Ansible
 install_ansible() {
     # Check the OS type and install Ansible accordingly
@@ -46,10 +45,10 @@ run_ansible_playbook() {
 }
 
 source_bashrc(){
-    source '~/.bashrc'
+    source ~/.bashrc
 }
 
 # Main script execution
-check_ansible_installed
-run_ansible_playbook
+#check_ansible_installed
+#run_ansible_playbook
 source_bashrc
