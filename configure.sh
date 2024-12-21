@@ -49,6 +49,6 @@ source_bashrc(){
 }
 
 # Main script execution
-#check_ansible_installed
-#run_ansible_playbook
+check_ansible_installed
+run_ansible_playbook
 source_bashrc
