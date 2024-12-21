@@ -97,10 +97,9 @@
         dest: "{{ lookup('env', 'HOME') }}/my-aliases"
 
     - name: Add aliases file to bashrc
-      ansible.builtin.copy:
-        src: "{{ lookup('env', 'HOME') }}/config-files/my-aliases"
-        dest: "{{ lookup('env', 'HOME') }}/.bashrc"
-        append: yes
+      blockinfile:
+        path: "{{ lookup('env', 'HOME') }}/.bashrc"
+        block: "{{ lookup('file', '~/config-giles/my-aliases') }}"
 
     - name: Source bashrc
       ansible.builtin.command: "source {{ lookup('env', 'HOME') }}/.bashrc"
