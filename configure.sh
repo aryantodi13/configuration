@@ -45,6 +45,11 @@ run_ansible_playbook() {
     fi
 }
 
+source_bashrc(){
+    source '~/.bashrc'
+}
+
 # Main script execution
 check_ansible_installed
 run_ansible_playbook
+source_bashrc

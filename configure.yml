@@ -3,12 +3,12 @@
   hosts: localhost
 
   tasks:
-    #- name: Ensure the system is updated (Debian/Ubuntu)
-    #  become: yes
-    #  apt:
-    #    update_cache: yes
-    #    upgrade: dist
-    #  when: ansible_os_family == "Debian"
+    - name: Ensure the system is updated (Debian/Ubuntu)
+      become: yes
+      apt:
+        update_cache: yes
+        upgrade: dist
+      when: ansible_os_family == "Debian"
 
     - name: Install Neovim on Debian/Ubuntu
       become: yes
@@ -101,5 +101,5 @@
         path: "{{ lookup('env', 'HOME') }}/.bashrc"
         block: "{{ lookup('file', '~/config-files/my-aliases') }}"
 
-    - name: Source bashrc
-      ansible.builtin.command: "source {{ lookup('env', 'HOME') }}/.bashrc"
+          #    - name: Source bashrc
+          #      ansible.builtin.command: "source {{ lookup('env', 'HOME') }}/.bashrc"
