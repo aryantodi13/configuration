@@ -99,7 +99,7 @@
     - name: Add aliases file to bashrc
       blockinfile:
         path: "{{ lookup('env', 'HOME') }}/.bashrc"
-        block: "{{ lookup('file', '~/config-giles/my-aliases') }}"
+        block: "{{ lookup('file', '~/config-files/my-aliases') }}"
 
     - name: Source bashrc
       ansible.builtin.command: "source {{ lookup('env', 'HOME') }}/.bashrc"
