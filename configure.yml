@@ -1,0 +1,106 @@
+---
+- name: Install Neovim and Tmux
+  hosts: localhost
+
+  tasks:
+    #- name: Ensure the system is updated (Debian/Ubuntu)
+    #  become: yes
+    #  apt:
+    #    update_cache: yes
+    #    upgrade: dist
+    #  when: ansible_os_family == "Debian"
+
+    - name: Install Neovim on Debian/Ubuntu
+      become: yes
+      apt:
+        name: neovim
+        state: present
+
+    - name: Verify Neovim installation
+      command: nvim --version
+      register: neovim_version
+
+    - name: Display Neovim version
+      debug:
+        msg: "{{ neovim_version.stdout }}"
+
+    - name: Display username
+      debug:
+        msg: "{{ lookup('env', 'USER') }}"
+
+    - name: Download packer
+      ansible.builtin.git:
+        repo: 'https://github.com/wbthomason/packer.nvim'
+        dest: "{{ lookup('env', 'HOME') }}/.local/share/nvim/site/pack/packer/start/packer.nvim"
+        depth: 1
+
+    - name: Make neovim configuration directory
+      ansible.builtin.file: 
+        path: "{{ lookup('env', 'HOME') }}/.config/nvim/lua/idot"
+        state: directory
+        recurse: yes
+
+    - name: Download config files from github
+      ansible.builtin.git:
+        repo: 'https://github.com/aryantodi13/config-files'
+        dest: "{{ lookup('env', 'HOME') }}/config-files"
+
+    - name: Copy neovim init.lua file
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/config-files/init.lua"
+        dest: "{{ lookup('env', 'HOME') }}/.config/nvim/init.lua"
+        owner: "{{ lookup('env', 'USER') }}"
+
+    - name: Copy neovim configuration files
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/config-files/idot/"
+        dest: "{{ lookup('env', 'HOME') }}/.config/nvim/lua/idot/"
+        owner: "{{ lookup('env', 'USER') }}"
+
+    - name : Run PackerSync
+      ansible.builtin.command:  "nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'"
+
+    - name: Install tmux
+      become: yes
+      apt: 
+        name: tmux
+        state: present
+
+    - name: Install tmux plugin manager
+      ansible.builtin.git:
+        repo: 'https://github.com/tmux-plugins/tpm'
+        dest: "{{ lookup('env', 'HOME') }}/.tmux/plugins/tpm"
+
+    - name: Copy tmux configurations
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/config-files/tmux/"
+        dest: "{{ lookup('env', 'HOME') }}/.config/tmux/"
+        owner: "{{ lookup('env', 'USER') }}"
+
+    - name: Start Tmux Server
+      ansible.builtin.command: "tmux new -d"
+
+    - name: Install Tmux Plugins
+      ansible.builtin.command: "{{ lookup('env', 'HOME') }}/.tmux/plugins/tpm/scripts/install_plugins.sh"
+
+    - name: Stop Tmux Server
+      ansible.builtin.command: "tmux kill-server"
+
+    - name: Add alert files
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/config-files/alert_timer.sh"
+        dest: "{{ lookup('env', 'HOME') }}/alert_timer.sh"
+
+    - name: Add aliases file
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/config-files/aliases"
+        dest: "{{ lookup('env', 'HOME') }}/aliases"
+
+    - name: Add aliases file to bashrc
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/config-files/my-aliases"
+        dest: "{{ lookup('env', 'HOME') }}/.bashrc"
+        append: yes
+
+    - name: Source bashrc
+      ansible.builtin.command: "source {{ lookup('env', 'HOME') }}/.bashrc"
