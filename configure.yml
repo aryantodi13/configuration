@@ -57,6 +57,12 @@
         dest: "{{ lookup('env', 'HOME') }}/.config/nvim/lua/idot/"
         owner: "{{ lookup('env', 'USER') }}"
 
+    - name: Copy neovim plugin config files
+      ansible.builtin.copy:
+        src: "{{ lookup('env', 'HOME') }}/config-files/plugin/"
+        dest: "{{ lookup('env', 'HOME') }}/.config/nvim/after/plugin/"
+        owner: "{{ lookup('env', 'USER') }}"
+
     - name : Run PackerSync
       ansible.builtin.command:  "nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'"
 
